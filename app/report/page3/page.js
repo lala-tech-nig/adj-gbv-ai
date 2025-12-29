@@ -248,7 +248,7 @@ export default function EvidenceUpload() {
           </Link>
           <div className="flex items-center gap-8">
             <button className="text-sm font-semibold text-gray-500 hover:text-gray-800">Skip for now</button>
-            <Link href="/report/page2" className="inline-block">
+            <Link href="/report/page4" className="inline-block">
             <button className="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-blue-700 shadow-lg shadow-blue-100">
               Continue to Review <ChevronRight size={20} />
             </button>

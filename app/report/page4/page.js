@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { Sun, Sunrise, Moon, Phone, MessageSquare, Shield, LogOut, User } from 'lucide-react';
+import Link from 'next/link';
 
 const SafetyPreferences = () => {
   const [timeSlot, setTimeSlot] = useState('morning');
@@ -130,12 +131,16 @@ const SafetyPreferences = () => {
 
         {/* Navigation Buttons */}
         <div className="flex justify-between items-center">
+          <Link href="/report/page3" className="inline-block">
           <button className="px-10 py-3 rounded-xl border border-slate-200 bg-white font-bold text-slate-700 hover:bg-slate-50 transition-colors">
             Back
           </button>
+          </Link>
+          <Link href="/report/page5" className="inline-block">
           <button className="px-10 py-3 rounded-xl bg-cyan-400 font-bold text-slate-900 hover:bg-cyan-500 transition-colors">
             Continue to Review
           </button>
+          </Link>
         </div>
       </main>
     </div>
