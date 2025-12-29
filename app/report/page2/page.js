@@ -14,6 +14,8 @@ import {
   LogOut
 } from 'lucide-react';
 
+import Link from 'next/link';
+
 // Sub-component for the Sidebar Info Cards
 const InfoCard = ({ icon: Icon, title, description }) => (
   <div className="flex gap-4 p-4 bg-gray-50 rounded-lg">
@@ -107,14 +109,18 @@ export default function IncidentReport() {
 
             {/* Navigation Buttons */}
             <div className="flex justify-between items-center pt-8 border-t border-gray-100">
+              <Link href="/report" className="inline-block">
               <button className="flex items-center gap-2 px-6 py-3 bg-white border border-gray-200 rounded-lg font-bold text-gray-700 hover:bg-gray-50 transition-colors">
                 <ChevronLeft size={20} />
                 Back
               </button>
+              </Link>
+              <Link href="/report/page3" className="inline-block">
               <button className="flex items-center gap-2 px-10 py-3 bg-cyan-400 hover:bg-cyan-500 text-white rounded-lg font-bold shadow-md transition-all">
                 Next Step
                 <ArrowRight size={20} />
               </button>
+              </Link>
             </div>
           </div>
 

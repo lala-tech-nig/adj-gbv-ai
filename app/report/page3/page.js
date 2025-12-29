@@ -8,6 +8,8 @@ import {
   ChevronRight, ArrowLeft, UploadCloud
 } from 'lucide-react';
 
+import Link from 'next/link';
+
 // --- Sub-components ---
 
 const StepIndicator = ({ steps, currentStep }) => (
@@ -239,14 +241,18 @@ export default function EvidenceUpload() {
 
         {/* Footer Actions */}
         <div className="mt-12 flex items-center justify-between pt-8 border-t border-gray-200">
+          <Link href="/report/page2" className="inline-block">
           <button className="px-6 py-3 rounded-xl border border-gray-300 font-semibold text-gray-600 flex items-center gap-2 hover:bg-gray-50">
              Back
           </button>
+          </Link>
           <div className="flex items-center gap-8">
             <button className="text-sm font-semibold text-gray-500 hover:text-gray-800">Skip for now</button>
+            <Link href="/report/page2" className="inline-block">
             <button className="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-blue-700 shadow-lg shadow-blue-100">
               Continue to Review <ChevronRight size={20} />
             </button>
+            </Link>
           </div>
         </div>
       </main>
