@@ -2,6 +2,8 @@
 
 import React from 'react';
 
+import Link from 'next/link';
+
 const ReportConfirmation = () => {
   const referenceNumber = "#REF-12345";
 
@@ -66,10 +68,12 @@ const ReportConfirmation = () => {
         <p className="text-slate-600 mb-8">
           You may close this tab or return to the main page.
         </p>
-
+        
+        <Link href="/" className="inline-block">
         <button className="bg-slate-100 hover:bg-slate-200 text-slate-900 font-semibold px-8 py-3 rounded-lg transition-colors">
           Return to Home
         </button>
+        </Link>
       </main>
 
       {/* Footer */}

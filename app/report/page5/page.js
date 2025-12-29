@@ -16,6 +16,8 @@ import {
   Phone
 } from 'lucide-react';
 
+import Link from 'next/link';
+
 const ReportReviewPage = () => {
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-700 pb-12">
@@ -182,9 +184,12 @@ const ReportReviewPage = () => {
             <button className="flex-1 bg-white border border-slate-200 text-slate-600 font-bold py-4 px-6 rounded-xl flex items-center justify-center gap-2 hover:bg-slate-50 transition-colors">
               <Save size={20} /> Save as Draft
             </button>
+            <Link href="/report/page6" className="inline-block">
             <button className="flex-[1.5] bg-sky-500 hover:bg-sky-600 text-white font-bold py-4 px-6 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-sky-200 transition-all">
               Submit Report <Send size={20} />
             </button>
+            </Link>
+
           </div>
           <p className="text-center text-[11px] text-slate-400">
             By clicking submit, your report will be encrypted and sent to the Ministry of Women Affairs Intake Unit.
