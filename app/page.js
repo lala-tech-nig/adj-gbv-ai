@@ -15,6 +15,8 @@ import {
   Radar,
 } from "lucide-react";
 
+import Link from "next/link";
+
 /* ===================== NAVBAR ===================== */
 const Navbar = () => (
   <nav className="flex items-center justify-between px-6 py-4 bg-white border-b border-gray-100">
@@ -73,17 +75,28 @@ const Hero = () => (
         to verified professionals — faster and safer.
       </p>
 
-      <div className="flex flex-wrap gap-4 mb-8">
-        <button className="flex items-center gap-2 bg-blue-600 text-white px-6 py-4 rounded-xl font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 transition">
-          <Shield className="w-5 h-5" />
-          Report an Incident
-        </button>
+<div className="flex flex-wrap gap-4 mb-8">
+  <Link href="/report" className="inline-block">
+    <button
+      type="button"
+      className="flex items-center gap-2 bg-blue-600 text-white px-6 py-4 rounded-xl font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 transition"
+    >
+      <Shield className="w-5 h-5" />
+      Report an Incident
+    </button>
+  </Link>
 
-        <button className="flex items-center gap-2 border-2 border-gray-100 bg-white text-gray-900 px-6 py-4 rounded-xl font-bold hover:bg-gray-50 transition">
-          <span className="text-red-500 text-xl">*</span>
-          Emergency Help
-        </button>
-      </div>
+  <Link href="/report" className="inline-block">
+    <button
+      type="button"
+      className="flex items-center gap-2 border-2 border-gray-100 bg-white text-gray-900 px-6 py-4 rounded-xl font-bold hover:bg-gray-50 transition"
+    >
+      <span className="text-red-500 text-xl">*</span>
+      Emergency Help
+    </button>
+  </Link>
+</div>
+
 
       <div className="flex items-center gap-2 text-sm text-gray-500">
         <Phone className="w-4 h-4 text-blue-500" />
