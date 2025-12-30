@@ -1,104 +1,74 @@
 "use client";
 
-import React, { useState } from 'react';
+
+import React from 'react';
 import { 
-  LayoutDashboard, 
-  Briefcase, 
-  BarChart3, 
-  Home, 
-  Settings, 
-  Search, 
-  SlidersHorizontal, 
-  Download, 
-  MoreVertical, 
-  Plus, 
-  Bell,
-  LogOut,
-  AlertCircle,
-  Clock,
-  FileText,
-  ShieldAlert
+  LayoutDashboard, Briefcase, FileText, Home, 
+  Settings, LogOut, Plus, Bell, EyeOff, 
+  AlertCircle, Clock, TrendingUp 
 } from 'lucide-react';
 
 // --- Sub-Components ---
 
 const SidebarItem = ({ icon: Icon, label, active = false }) => (
   <div className={`flex items-center space-x-3 p-3 rounded-lg cursor-pointer transition-colors ${
-    active ? 'bg-cyan-50 text-cyan-600' : 'text-slate-500 hover:bg-gray-50'
+    active ? 'bg-blue-50 text-blue-600' : 'text-slate-500 hover:bg-gray-100'
   }`}>
     <Icon size={20} />
     <span className="font-medium text-sm">{label}</span>
   </div>
 );
 
-const StatCard = ({ title, value, icon: Icon, colorClass, iconBg }) => (
-  <div className="bg-white p-5 rounded-xl border border-slate-100 shadow-sm flex justify-between items-start flex-1">
-    <div>
-      <p className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">{title}</p>
-      <h3 className="text-3xl font-bold text-slate-800">{value}</h3>
+const StatCard = ({ title, value, icon: Icon, trend, trendColor, subtext, iconBg }) => (
+  <div className="bg-white p-5 rounded-xl border border-slate-100 shadow-sm">
+    <div className="flex justify-between items-start mb-4">
+      <div>
+        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">{title}</p>
+        <h3 className="text-3xl font-bold text-slate-800 mt-1">{value}</h3>
+      </div>
+      <div className={`p-2 rounded-lg ${iconBg}`}>
+        <Icon size={20} className={trendColor} />
+      </div>
     </div>
-    <div className={`${iconBg} p-2 rounded-lg`}>
-      <Icon className={colorClass} size={20} />
+    <div className="flex items-center space-x-1">
+      {trend && <TrendingUp size={14} className={trendColor} />}
+      <p className={`text-xs ${trendColor} font-medium`}>{trend}</p>
+      <p className="text-xs text-slate-400">{subtext}</p>
     </div>
   </div>
 );
 
-const StatusBadge = ({ level }) => {
-  const styles = {
-    CRITICAL: "bg-red-50 text-red-600 border-red-100",
-    HIGH: "bg-orange-50 text-orange-600 border-orange-100",
-    MEDIUM: "bg-yellow-50 text-yellow-600 border-yellow-100",
-    LOW: "bg-green-50 text-green-600 border-green-100",
-  };
+// --- Main Dashboard ---
+
+export default function Dashboard() {
   return (
-    <span className={`px-3 py-1 rounded-full text-[10px] font-bold border ${styles[level] || styles.LOW}`}>
-      ● {level}
-    </span>
-  );
-};
-
-// --- Main Page ---
-
-export default function CaseManagement() {
-  const [privacyMode, setPrivacyMode] = useState(false);
-
-  const cases = [
-    { id: "#GBV-2023-894", name: "Amina Johnson", phone: "+234 803 123 ****", location: "Abeokuta South", subLoc: "Oke-Ilewo Street", date: "Oct 24, 2023 • 14:30", risk: "CRITICAL" },
-    { id: "#GBV-2023-892", name: "Chinyere Obi", phone: "+234 705 555 ****", location: "Sagamu", subLoc: "Sabo Area", date: "Oct 24, 2023 • 09:15", risk: "HIGH" },
-    { id: "#GBV-2023-889", name: "Funke Adebayo", phone: "+234 812 999 ****", location: "Ifo", subLoc: "Olambe Junction", date: "Oct 23, 2023 • 16:45", risk: "MEDIUM" },
-    { id: "#GBV-2023-885", name: "Anonymous Victim", phone: "Contact via Shelter", location: "Ijebu Ode", subLoc: "Molipa Estate", date: "Oct 22, 2023 • 11:20", risk: "LOW" },
-    { id: "#GBV-2023-881", name: "B. Okoro", phone: "+234 901 222 ****", location: "Ado-Odo/Ota", subLoc: "Sango Ota Bridge", date: "Oct 21, 2023 • 21:05", risk: "CRITICAL" },
-    { id: "#GBV-2023-878", name: "T. Balogun", phone: "+234 810 444 ****", location: "Ewekoro", subLoc: "Arigbajo", date: "Oct 20, 2023 • 13:10", risk: "MEDIUM" },
-  ];
-
-  return (
-    <div className="flex h-screen bg-[#F8FAFC] text-slate-800 font-sans">
-      {/* Sidebar */}
+    <div className="flex min-h-screen bg-[#F8FAFC] font-sans text-slate-900">
+      
+      {/* LEFT SIDEBAR */}
       <aside className="w-64 bg-white border-r border-slate-200 flex flex-col p-6">
         <div className="flex items-center space-x-3 mb-10">
-          <div className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center">
-            <img src="/api/placeholder/40/40" alt="Logo" className="rounded-full" />
-          </div>
+          <div className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-xs font-bold">LOGO</div>
           <div>
             <h1 className="text-sm font-bold leading-tight">Ogun State MWA</h1>
-            <p className="text-[10px] text-slate-400 font-medium">Officer Portal</p>
+            <p className="text-[10px] text-slate-400 uppercase tracking-tighter">Officer Portal</p>
           </div>
         </div>
 
         <nav className="flex-1 space-y-2">
-          <SidebarItem icon={LayoutDashboard} label="Dashboard" />
-          <SidebarItem icon={Briefcase} label="Cases" active />
-          <SidebarItem icon={BarChart3} label="Reports" />
+          <SidebarItem icon={LayoutDashboard} label="Dashboard" active />
+          <SidebarItem icon={Briefcase} label="Cases" />
+          <SidebarItem icon={FileText} label="Reports" />
           <SidebarItem icon={Home} label="Shelters" />
         </nav>
 
-        <div className="mt-auto pt-6 border-t border-slate-100">
-          <p className="text-[10px] font-bold text-slate-400 uppercase mb-4 tracking-widest">System</p>
+        <div className="pt-6 border-t border-slate-100 space-y-2">
+          <p className="text-[10px] font-bold text-slate-400 uppercase ml-3 mb-2">System</p>
           <SidebarItem icon={Settings} label="Settings" />
-          
-          <div className="mt-8 flex items-center justify-between p-2">
+          <div className="flex items-center justify-between mt-8 p-3 bg-slate-50 rounded-xl">
             <div className="flex items-center space-x-3">
-              <img src="/api/placeholder/32/32" className="w-8 h-8 rounded-full border border-orange-200" alt="Avatar" />
+              <div className="w-8 h-8 bg-blue-200 rounded-full overflow-hidden">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah" alt="Profile" />
+              </div>
               <div>
                 <p className="text-xs font-bold">Sarah Adebayo</p>
                 <p className="text-[10px] text-slate-400">Senior Case Officer</p>
@@ -109,126 +79,130 @@ export default function CaseManagement() {
         </div>
       </aside>
 
-      {/* Main Content */}
-      <main className="flex-1 overflow-y-auto">
-        {/* Header */}
-        <header className="px-8 py-6 flex justify-between items-center bg-white border-b border-slate-100 sticky top-0 z-10">
-          <h2 className="text-xl font-bold text-slate-700">Case Management</h2>
+      {/* MAIN CONTENT */}
+      <main className="flex-1 p-8 overflow-y-auto">
+        
+        {/* HEADER */}
+        <header className="flex justify-between items-center mb-8">
+          <h2 className="text-2xl font-bold">Dashboard Overview</h2>
           <div className="flex items-center space-x-4">
-            <div className="flex items-center bg-slate-100 rounded-full px-3 py-1.5 space-x-3">
-              <span className="text-[11px] font-semibold text-slate-500">Privacy Mode</span>
-              <button 
-                onClick={() => setPrivacyMode(!privacyMode)}
-                className={`w-10 h-5 rounded-full transition-colors relative ${privacyMode ? 'bg-cyan-500' : 'bg-slate-300'}`}
-              >
-                <div className={`absolute top-1 w-3 h-3 bg-white rounded-full transition-all ${privacyMode ? 'left-6' : 'left-1'}`} />
-              </button>
+            <div className="flex items-center bg-slate-100 px-3 py-1.5 rounded-full space-x-2">
+              <EyeOff size={16} className="text-slate-500" />
+              <span className="text-xs font-medium text-slate-600">Privacy Mode</span>
+              <div className="w-8 h-4 bg-slate-300 rounded-full relative">
+                 <div className="absolute right-0.5 top-0.5 w-3 h-3 bg-white rounded-full"></div>
+              </div>
             </div>
             <div className="relative p-2 text-slate-400">
               <Bell size={20} />
-              <div className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white" />
+              <div className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></div>
             </div>
-            <button className="bg-[#00ADEF] hover:bg-cyan-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 text-sm font-semibold transition-all">
+            <button className="bg-[#00AEEF] hover:bg-sky-500 text-white px-4 py-2 rounded-lg flex items-center space-x-2 text-sm font-bold transition-all shadow-sm">
               <Plus size={18} />
               <span>New Case</span>
             </button>
           </div>
         </header>
 
-        <div className="p-8 space-y-6">
-          {/* Stats Grid */}
-          <div className="flex space-x-4">
-            <StatCard title="Total Active Cases" value="142" icon={Briefcase} colorClass="text-blue-600" iconBg="bg-blue-50" />
-            <StatCard title="High Risk" value="18" icon={AlertCircle} colorClass="text-orange-500" iconBg="bg-orange-50" />
-            <StatCard title="Critical Attention" value="5" icon={ShieldAlert} colorClass="text-red-500" iconBg="bg-red-50" />
-            <StatCard title="Pending Review" value="24" icon={Clock} colorClass="text-purple-500" iconBg="bg-purple-50" />
-          </div>
+        {/* STATS ROW */}
+        <div className="grid grid-cols-4 gap-6 mb-8">
+          <StatCard 
+            title="Total Active Cases" value="142" icon={Briefcase} 
+            trend="+12%" trendColor="text-emerald-500" subtext="from last month" iconBg="bg-blue-50"
+          />
+          <StatCard 
+            title="High Risk Cases" value="18" icon={AlertCircle} 
+            trend="+2%" trendColor="text-orange-500" subtext="stable trend" iconBg="bg-orange-50"
+          />
+          <StatCard 
+            title="Critical Attention" value="5" icon={AlertCircle} 
+            trend="3 New" trendColor="text-red-500" subtext="since yesterday" iconBg="bg-red-50"
+          />
+          <StatCard 
+            title="Pending Review" value="24" icon={Clock} 
+            trend="5 overdue" trendColor="text-purple-500" subtext="by >48hrs" iconBg="bg-purple-50"
+          />
+        </div>
 
-          {/* Filters & Actions */}
-          <div className="bg-white p-4 rounded-xl border border-slate-100 flex items-center justify-between shadow-sm">
-            <div className="flex items-center space-x-3 flex-1">
-              <div className="relative w-1/3">
-                <Search className="absolute left-3 top-2.5 text-slate-400" size={18} />
-                <input 
-                  type="text" 
-                  placeholder="Search by Name, Case ID, or LGA..." 
-                  className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-cyan-500"
-                />
+        {/* MIDDLE SECTION */}
+        <div className="grid grid-cols-3 gap-6 mb-8">
+          {/* Trends Graph Placeholder */}
+          <div className="col-span-2 bg-white p-6 rounded-2xl border border-slate-100 shadow-sm relative">
+            <div className="flex justify-between items-center mb-8">
+              <div>
+                <h4 className="font-bold text-slate-800 text-lg">Case Reporting Trends</h4>
+                <p className="text-xs text-slate-400">Monthly breakdown of reported cases (Last 6 Months)</p>
               </div>
-              <button className="flex items-center space-x-2 px-4 py-2 border border-slate-200 rounded-lg text-sm font-medium text-slate-600 hover:bg-gray-50">
-                <SlidersHorizontal size={16} />
-                <span>Filters</span>
-                <span className="bg-cyan-500 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full">2</span>
-              </button>
-              
-              <div className="flex items-center space-x-2">
-                <span className="bg-red-50 text-red-500 px-3 py-1 rounded-md text-xs font-medium border border-red-100 flex items-center">
-                  Risk: Critical <Plus size={14} className="ml-2 rotate-45" />
-                </span>
-                <span className="bg-blue-50 text-blue-500 px-3 py-1 rounded-md text-xs font-medium border border-blue-100 flex items-center">
-                  Status: Open <Plus size={14} className="ml-2 rotate-45" />
-                </span>
+              <select className="text-xs border border-slate-200 rounded-md px-2 py-1 bg-white outline-none">
+                <option>Last 6 Months</option>
+              </select>
+            </div>
+            <div className="h-48 border-b border-l border-slate-100 flex items-end justify-between px-4">
+              {['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'].map((month) => (
+                <div key={month} className="flex flex-col items-center space-y-2">
+                  <div className="text-[10px] text-slate-400 mt-2">{month}</div>
+                </div>
+              ))}
+              {/* This is where a chart library like Recharts would go */}
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-20">
+                <p className="text-xs italic">Chart Visualization Area</p>
               </div>
             </div>
-            
-            <button className="flex items-center space-x-2 text-slate-500 text-sm font-semibold hover:text-slate-800">
-              <Download size={18} />
-              <span>Export</span>
-            </button>
           </div>
 
-          {/* Table Container */}
-          <div className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
-            <table className="w-full text-left">
-              <thead className="bg-slate-50 border-b border-slate-100">
-                <tr className="text-[10px] uppercase tracking-wider font-bold text-slate-400">
-                  <th className="px-6 py-4">Case ID</th>
-                  <th className="px-6 py-4">Victim Details</th>
-                  <th className="px-6 py-4">Location / LGA</th>
-                  <th className="px-6 py-4">Submitted</th>
-                  <th className="px-6 py-4">Risk Level</th>
-                  <th className="px-6 py-4 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-50">
-                {cases.map((item, idx) => (
-                  <tr key={idx} className="hover:bg-slate-50 transition-colors">
-                    <td className="px-6 py-4 text-cyan-500 font-medium text-sm">{item.id}</td>
-                    <td className="px-6 py-4">
-                      <p className="text-sm font-bold text-slate-700">{item.name}</p>
-                      <p className="text-xs text-slate-400">{item.phone}</p>
-                    </td>
-                    <td className="px-6 py-4">
-                      <p className="text-sm font-semibold text-slate-600">{item.location}</p>
-                      <p className="text-xs text-slate-400">{item.subLoc}</p>
-                    </td>
-                    <td className="px-6 py-4 text-xs text-slate-500 font-medium">{item.date}</td>
-                    <td className="px-6 py-4">
-                      <StatusBadge level={item.risk} />
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <button className="text-slate-400 hover:text-slate-600">
-                        <MoreVertical size={20} />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          {/* Risk Assessment Donut Placeholder */}
+          <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col">
+            <h4 className="font-bold text-slate-800 text-lg">Risk Assessment</h4>
+            <p className="text-xs text-slate-400 mb-6">Distribution by assigned risk level</p>
+            <div className="flex-1 flex flex-col items-center justify-center">
+                <div className="relative w-40 h-40 rounded-full border-[15px] border-slate-50 flex items-center justify-center">
+                    {/* Visual representation of the donut segments */}
+                    <div className="absolute inset-0 rounded-full border-[15px] border-t-red-500 border-r-orange-400 border-b-yellow-400 border-l-emerald-500"></div>
+                    <div className="text-center bg-white rounded-full w-full h-full flex flex-col items-center justify-center z-10">
+                        <span className="text-3xl font-bold">142</span>
+                        <span className="text-[10px] text-slate-400 uppercase font-bold tracking-widest">Total Cases</span>
+                    </div>
+                </div>
+                <div className="grid grid-cols-2 gap-y-2 gap-x-4 mt-8 w-full">
+                    <LegendItem color="bg-red-500" label="Critical (15%)" />
+                    <LegendItem color="bg-orange-400" label="High (30%)" />
+                    <LegendItem color="bg-yellow-400" label="Medium (25%)" />
+                    <LegendItem color="bg-emerald-500" label="Low (30%)" />
+                </div>
+            </div>
+          </div>
+        </div>
 
-            {/* Pagination */}
-            <div className="px-6 py-4 border-t border-slate-100 flex justify-between items-center bg-white">
-              <p className="text-xs text-slate-400">
-                Showing <span className="font-bold text-slate-700">1 to 6</span> of <span className="font-bold text-slate-700">142</span> results
-              </p>
-              <div className="flex space-x-1">
-                <button className="px-3 py-1.5 text-xs font-semibold text-slate-400 border border-slate-200 rounded-md hover:bg-gray-50">Previous</button>
-                <button className="px-3 py-1.5 text-xs font-semibold bg-cyan-500 text-white rounded-md">1</button>
-                <button className="px-3 py-1.5 text-xs font-semibold text-slate-500 border border-slate-200 rounded-md hover:bg-gray-50">2</button>
-                <button className="px-3 py-1.5 text-xs font-semibold text-slate-500 border border-slate-200 rounded-md hover:bg-gray-50">3</button>
-                <span className="px-2 py-1.5 text-slate-400">...</span>
-                <button className="px-3 py-1.5 text-xs font-semibold text-slate-500 border border-slate-200 rounded-md hover:bg-gray-50">Next</button>
-              </div>
+        {/* BOTTOM SECTION */}
+        <div className="grid grid-cols-3 gap-6">
+          {/* Critical Attention Table */}
+          <div className="col-span-2 bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
+            <div className="flex justify-between items-center mb-6">
+               <div className="flex items-center space-x-2">
+                  <AlertCircle size={18} className="text-red-500" />
+                  <h4 className="font-bold text-slate-800">Critical Attention Required</h4>
+               </div>
+               <button className="text-[#00AEEF] text-xs font-bold hover:underline">View All Critical</button>
+            </div>
+            <div className="space-y-4">
+              <CriticalRow name="Amina Johnson" id="GBV-894" tag="Immediate Risk" tagBg="bg-red-50" tagText="text-red-600" action="Review" />
+              <CriticalRow name="B. Okoro" id="GBV-881" tag="Shelter Needed" tagBg="bg-orange-50" tagText="text-orange-600" action="Assign" />
+              <CriticalRow name="S. Adeyemi" id="GBV-865" tag="Medical Aid" tagBg="bg-pink-50" tagText="text-pink-600" action="Dispatch" />
+            </div>
+          </div>
+
+          {/* Locations List */}
+          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h4 className="font-bold text-slate-800">Top Reported Locations (LGA)</h4>
+              <div className="text-slate-400">...</div>
+            </div>
+            <div className="space-y-4">
+               <LocationBar label="Abeokuta South" count="45" width="w-[90%]" />
+               <LocationBar label="Ado-Odo/Ota" count="32" width="w-[65%]" />
+               <LocationBar label="Sagamu" count="28" width="w-[55%]" />
+               <LocationBar label="Ijebu Ode" count="15" width="w-[30%]" />
+               <LocationBar label="Ifo" count="10" width="w-[20%]" />
             </div>
           </div>
         </div>
@@ -236,3 +210,44 @@ export default function CaseManagement() {
     </div>
   );
 }
+
+// --- Internal Helper Components ---
+
+const LegendItem = ({ color, label }) => (
+    <div className="flex items-center space-x-2">
+        <div className={`w-2 h-2 rounded-full ${color}`}></div>
+        <span className="text-[10px] text-slate-600 font-medium">{label}</span>
+    </div>
+)
+
+const CriticalRow = ({ name, id, tag, tagBg, tagText, action }) => (
+  <div className="flex items-center justify-between p-3 border border-slate-50 rounded-xl hover:bg-slate-50 transition-colors">
+    <div className="flex items-center space-x-4">
+      <div className="w-10 h-10 rounded-full bg-red-50 text-red-600 flex items-center justify-center text-xs font-bold">
+        {name.split(' ').map(n => n[0]).join('')}
+      </div>
+      <div>
+        <p className="text-sm font-bold">{name}</p>
+        <p className="text-[10px] text-slate-400 uppercase">ID: #{id}</p>
+      </div>
+    </div>
+    <div className={`px-3 py-1 rounded-md ${tagBg} ${tagText} text-[10px] font-bold`}>
+      {tag}
+    </div>
+    <button className="border border-slate-200 px-4 py-1.5 rounded-lg text-xs font-bold text-slate-600 hover:bg-white shadow-sm">
+      {action}
+    </button>
+  </div>
+);
+
+const LocationBar = ({ label, count, width }) => (
+  <div>
+    <div className="flex justify-between text-[11px] mb-1">
+      <span className="text-slate-600 font-medium">{label}</span>
+      <span className="text-slate-400">{count} cases</span>
+    </div>
+    <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+      <div className={`h-full bg-sky-400 rounded-full ${width}`}></div>
+    </div>
+  </div>
+);
