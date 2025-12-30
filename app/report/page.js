@@ -174,10 +174,12 @@ export default function PersonalInformationForm() {
 
           {/* Navigation Buttons */}
           <div className="flex justify-between items-center pt-10">
+             <Link href="/" className="inline-block">
             <button className="flex items-center gap-2 text-slate-500 font-bold text-sm hover:text-slate-800 transition-colors">
               <ArrowLeft size={18} />
               Back
             </button>
+            </Link>
  <Link href="/report/page2" className="inline-block">
       <button
         type="button"

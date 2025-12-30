@@ -31,6 +31,8 @@ const InfoCard = ({ icon: Icon, title, description }) => (
   </div>
 );
 
+
+
 export default function IncidentReport() {
   const [narrative, setNarrative] = useState('');
 
