@@ -1,150 +1,137 @@
 "use client";
 
-import React, { useState } from 'react';
-import { Sun, Sunrise, Moon, Phone, MessageSquare, Shield, LogOut, User } from 'lucide-react';
-import Link from 'next/link';
+import React, { useState } from "react";
+import MainLayout from '@/app/components/MainLayout';
+import { Sun, Sunrise, Moon, Phone, MessageSquare } from "lucide-react";
+import Link from "next/link";
 
-const SafetyPreferences = () => {
-  const [timeSlot, setTimeSlot] = useState('morning');
-  const [contactMethod, setContactMethod] = useState('phone');
+const steps = [
+  { id: 1, name: "Personal Info" },
+  { id: 2, name: "Incident Details" },
+  { id: 3, name: "Evidence" },
+  { id: 4, name: "Review" },
+];
+
+export default function SafetyPreferences() {
+  const [timeSlot, setTimeSlot] = useState("morning");
+  const [contactMethod, setContactMethod] = useState("phone");
   const [noPriorNotice, setNoPriorNotice] = useState(false);
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans text-slate-900">
-      {/* Header */}
-      <header className="flex items-center justify-between px-8 py-4 bg-white border-b border-slate-200">
-        <div className="flex items-center gap-2">
-          <div className="bg-cyan-100 p-2 rounded-lg">
-            <Shield className="w-6 h-6 text-cyan-600" />
-          </div>
-          <h1 className="font-bold text-lg text-slate-800">Ogun State GBV Reporting</h1>
-        </div>
-        <div className="flex items-center gap-4">
-          <button className="flex items-center gap-2 bg-red-50 text-red-600 px-4 py-2 rounded-lg font-medium border border-red-100 hover:bg-red-100 transition-colors">
-            <LogOut className="w-4 h-4" />
-            Quick Exit (Esc)
-          </button>
-          <div className="w-10 h-10 bg-slate-200 rounded-full flex items-center justify-center">
-            <User className="w-6 h-6 text-slate-500" />
-          </div>
-        </div>
-      </header>
-
-      <main className="max-w-4xl mx-auto mt-12 px-6 pb-20">
-        {/* Progress Bar */}
-        <div className="mb-12">
-          <div className="flex justify-between text-sm font-semibold mb-2">
-            <span className="text-slate-700">Step 3 of 5: Safety Preferences</span>
-            <span className="text-cyan-600">60% Completed</span>
-          </div>
-          <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
-            <div className="bg-cyan-400 h-full w-[60%]"></div>
-          </div>
-        </div>
-
-        {/* Title Section */}
-        <section className="mb-10">
-          <h2 className="text-4xl font-bold mb-4">Safety Preferences</h2>
-          <p className="text-cyan-700 text-lg leading-relaxed">
-            Your safety is our priority. Please tell us how and when we can reach you without putting you at risk. 
-            We will never share this information with the perpetrator.
+    <MainLayout steps={steps} currentStep={3} title="Safety Preferences">
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
+        <section className="mb-8">
+          <h2 className="text-2xl font-bold mb-2">Safety Preferences</h2>
+          <p className="text-gray-500">
+            Tell us the safest way and time to contact you. We will respect these
+            preferences.
           </p>
         </section>
 
-        {/* Time Selection */}
-        <section className="mb-10">
-          <h3 className="font-bold text-lg mb-4">When is the safest time to contact you?</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {[
-              { id: 'morning', label: 'Morning', time: '8am-12pm', icon: Sun, color: 'text-cyan-500' },
-              { id: 'afternoon', label: 'Afternoon', time: '12pm-4pm', icon: Sunrise, color: 'text-orange-500' },
-              { id: 'evening', label: 'Evening', time: '4pm-8pm', icon: Moon, color: 'text-indigo-500' }
-            ].map((slot) => (
+        {/* Time Slot */}
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          {[
+            { id: "morning", label: "Morning", time: "8am – 12pm", icon: Sun },
+            {
+              id: "afternoon",
+              label: "Afternoon",
+              time: "12pm – 4pm",
+              icon: Sunrise,
+            },
+            { id: "evening", label: "Evening", time: "4pm – 8pm", icon: Moon },
+          ].map((slot) => {
+            const Icon = slot.icon;
+            return (
               <button
                 key={slot.id}
                 onClick={() => setTimeSlot(slot.id)}
-                className={`p-6 rounded-xl border-2 transition-all text-left flex flex-col gap-2 ${
-                  timeSlot === slot.id ? 'border-cyan-400 bg-cyan-50/30' : 'border-slate-100 bg-white'
+                className={`p-6 rounded-xl border transition ${
+                  timeSlot === slot.id
+                    ? "border-blue-500 bg-blue-50"
+                    : "bg-white hover:border-gray-300"
                 }`}
               >
-                <slot.icon className={`w-6 h-6 ${slot.color}`} />
-                <div>
-                  <div className="font-bold text-slate-800">{slot.label}</div>
-                  <div className="text-slate-400 text-sm">{slot.time}</div>
-                </div>
+                <Icon className="w-6 h-6 text-blue-500 mb-2" />
+                <div className="font-bold">{slot.label}</div>
+                <div className="text-sm text-gray-400">{slot.time}</div>
               </button>
-            ))}
-          </div>
+            );
+          })}
         </section>
 
         {/* Contact Method */}
-        <section className="mb-8">
-          <h3 className="font-bold text-lg mb-4">How would you prefer we contact you?</h3>
-          <div className="flex flex-wrap gap-4">
+        <section className="mb-6">
+          <h3 className="font-bold mb-3">Preferred contact method</h3>
+          <div className="flex flex-wrap gap-3">
             <button
-              onClick={() => setContactMethod('phone')}
-              className={`flex items-center gap-3 px-6 py-4 rounded-lg border transition-all ${
-                contactMethod === 'phone' ? 'bg-cyan-50 border-cyan-300 text-cyan-600' : 'bg-white border-slate-200 text-slate-600'
+              onClick={() => setContactMethod("phone")}
+              className={`px-4 py-2 rounded border flex items-center gap-2 ${
+                contactMethod === "phone"
+                  ? "bg-blue-50 border-blue-500"
+                  : "bg-white"
               }`}
             >
-              <Phone className="w-5 h-5" />
-              <span className="font-semibold">Phone Call</span>
+              <Phone size={16} /> Phone
             </button>
+
             <button
-              onClick={() => setContactMethod('sms')}
-              className={`flex items-center gap-3 px-6 py-4 rounded-lg border transition-all ${
-                contactMethod === 'sms' ? 'bg-cyan-50 border-cyan-300 text-cyan-600' : 'bg-white border-slate-200 text-slate-600'
+              onClick={() => setContactMethod("sms")}
+              className={`px-4 py-2 rounded border flex items-center gap-2 ${
+                contactMethod === "sms"
+                  ? "bg-blue-50 border-blue-500"
+                  : "bg-white"
               }`}
             >
-              <MessageSquare className="w-5 h-5" />
-              <span className="font-semibold">SMS Text</span>
+              <MessageSquare size={16} /> SMS
             </button>
+
             <button
-              onClick={() => setContactMethod('whatsapp')}
-              className={`flex items-center gap-3 px-6 py-4 rounded-lg border transition-all ${
-                contactMethod === 'whatsapp' ? 'bg-cyan-50 border-cyan-300 text-cyan-600' : 'bg-white border-slate-200 text-slate-600'
+              onClick={() => setContactMethod("whatsapp")}
+              className={`px-4 py-2 rounded border ${
+                contactMethod === "whatsapp"
+                  ? "bg-blue-50 border-blue-500"
+                  : "bg-white"
               }`}
             >
-              <div className="w-5 h-5 flex items-center justify-center bg-slate-500 text-white rounded text-[10px]">W</div>
-              <span className="font-semibold">WhatsApp</span>
+              WhatsApp
             </button>
           </div>
         </section>
 
-        {/* Warning Box */}
-        <section className="mb-12">
-          <label className="flex items-start gap-4 p-6 rounded-xl bg-orange-50/50 cursor-pointer border border-orange-100">
-            <input 
-              type="checkbox" 
+        {/* Discreet Notice */}
+        <section className="mb-8">
+          <label className="flex items-start gap-4 p-4 rounded border bg-orange-50 cursor-pointer">
+            <input
+              type="checkbox"
               checked={noPriorNotice}
               onChange={() => setNoPriorNotice(!noPriorNotice)}
-              className="mt-1 w-5 h-5 rounded border-slate-300 text-cyan-500 focus:ring-cyan-500" 
+              className="mt-1"
             />
             <div>
-              <div className="font-bold text-slate-800">Do not call me without prior notice</div>
-              <p className="text-cyan-700/80 text-sm mt-1">
-                Check this box if receiving a surprise call could put you at risk. We will send a discreet text message first to confirm it is safe to talk.
-              </p>
+              <div className="font-bold">
+                Do not call me without prior notice
+              </div>
+              <div className="text-sm text-gray-500">
+                We will send a discreet message first to confirm it is safe to
+                talk.
+              </div>
             </div>
           </label>
         </section>
 
-        {/* Navigation Buttons */}
-        <div className="flex justify-between items-center">
-          <Link href="/report/page3" className="inline-block">
-          <button className="px-10 py-3 rounded-xl border border-slate-200 bg-white font-bold text-slate-700 hover:bg-slate-50 transition-colors">
-            Back
-          </button>
+        {/* Navigation */}
+        <div className="flex justify-between">
+          <Link href="/report/page3">
+            <button className="px-6 py-3 rounded border">Back</button>
           </Link>
-          <Link href="/report/page5" className="inline-block">
-          <button className="px-10 py-3 rounded-xl bg-cyan-400 font-bold text-slate-900 hover:bg-cyan-500 transition-colors">
-            Continue to Review
-          </button>
+          <Link href="/report/page5">
+            <button className="px-6 py-3 rounded bg-blue-600 text-white">
+              Continue
+            </button>
           </Link>
         </div>
-      </main>
-    </div>
+      </div>
+    </MainLayout>
   );
-};
-
-export default SafetyPreferences;
+}

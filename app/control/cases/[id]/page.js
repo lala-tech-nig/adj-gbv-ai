@@ -1,86 +1,69 @@
 "use client";
 
-import React from 'react';
-import { 
-  LayoutDashboard, FileText, BarChart3, Home, Settings, 
-  LogOut, MapPin, AlertTriangle, ShieldAlert, User, 
-  Phone, Languages, Upload, Play, FileImage, FileAudio, FileDown 
-} from 'lucide-react';
+import React, { useState } from "react";
+import {
+  LayoutDashboard,
+  FileText,
+  BarChart3,
+  Home,
+  Settings,
+  LogOut,
+  MapPin,
+  AlertTriangle,
+  ShieldAlert,
+  User,
+  Phone,
+  Languages,
+  Upload,
+  Play,
+  FileImage,
+  FileDown
+} from "lucide-react";
 
 const CaseDetailsPage = () => {
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+
   return (
     <div className="flex min-h-screen bg-slate-50 font-sans text-slate-900">
-      {/* --- SIDEBAR --- */}
-      <aside className="w-64 bg-white border-r border-slate-200 flex flex-col">
-        <div className="p-6">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-8 h-8 bg-sky-100 rounded-full flex items-center justify-center">
-              <span className="text-sky-600 font-bold text-xs">MWA</span>
-            </div>
-            <div>
-              <h1 className="text-sm font-bold leading-tight">Ogun State MWA</h1>
-              <p className="text-[10px] text-slate-500 uppercase tracking-wider">Officer Portal</p>
-            </div>
-          </div>
-
-          <nav className="space-y-1">
-            <NavItem icon={<LayoutDashboard size={18}/>} label="Dashboard" />
-            <NavItem icon={<FileText size={18}/>} label="Cases" active />
-            <NavItem icon={<BarChart3 size={18}/>} label="Reports" />
-            <NavItem icon={<Home size={18}/>} label="Shelters" />
-          </nav>
-        </div>
-
-        <div className="mt-auto p-6 border-t border-slate-100">
-          <p className="text-[10px] text-slate-400 uppercase mb-4 font-bold">System</p>
-          <NavItem icon={<Settings size={18}/>} label="Settings" />
-          <div className="mt-6 flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-slate-200 overflow-hidden">
-              <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah" alt="Sarah" />
-            </div>
-            <div className="flex-1">
-              <p className="text-xs font-bold">Sarah Adebayo</p>
-              <p className="text-[10px] text-slate-500">Senior Case Officer</p>
-            </div>
-            <LogOut size={16} className="text-slate-400 cursor-pointer" />
-          </div>
-        </div>
-      </aside>
-
-      {/* --- MAIN CONTENT --- */}
-      <main className="flex-1 p-8 overflow-y-auto">
-        {/* Header Section */}
+      <main className="flex-1 p-4 md:p-8 overflow-y-auto">
         <div className="flex justify-between items-start mb-6">
           <div>
             <div className="flex items-center gap-2 text-slate-400 text-xs mb-1">
-              <span>Cases</span> <span>&rsaquo;</span> <span>Active</span> <span>&rsaquo;</span> <span className="text-slate-600">#GBV-2023-894</span>
+              <span>Cases</span> <span>&rsaquo;</span> <span>Active</span>{" "}
+              <span>&rsaquo;</span>{" "}
+              <span className="text-slate-600">#GBV-2023-894</span>
             </div>
             <h2 className="text-2xl font-bold">Case Details</h2>
           </div>
           <div className="flex items-center gap-4">
-             <div className="flex items-center bg-slate-200 p-1 rounded-full px-3">
-                <span className="text-[10px] font-bold mr-2">Privacy Mode</span>
-                <div className="w-8 h-4 bg-slate-400 rounded-full"></div>
-             </div>
-             <div className="relative">
-                <div className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></div>
-                <ShieldAlert size={20} className="text-slate-400" />
-             </div>
+            <div className="flex items-center bg-slate-200 p-1 rounded-full px-3">
+              <span className="text-[10px] font-bold mr-2">Privacy Mode</span>
+              <div className="w-8 h-4 bg-slate-400 rounded-full"></div>
+            </div>
+            <div className="relative">
+              <div className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></div>
+              <ShieldAlert size={20} className="text-slate-400" />
+            </div>
           </div>
         </div>
 
         <div className="flex gap-2 text-sky-600 text-sm font-medium mb-6 cursor-pointer hover:underline">
           <span>&larr;</span> Back to Case List
           <div className="ml-auto flex items-center gap-4 text-slate-500 font-normal">
-            <span className="flex items-center gap-2">Status: <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider underline decoration-blue-700 underline-offset-4">• IN PROGRESS</span></span>
+            <span className="flex items-center gap-2">
+              Status:{" "}
+              <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider underline decoration-blue-700 underline-offset-4">
+                • IN PROGRESS
+              </span>
+            </span>
             <span>Last Updated: Oct 24, 2023 • 14:45</span>
           </div>
         </div>
 
         <div className="grid grid-cols-12 gap-6">
-          {/* Left Column (Report and Evidence) */}
+          {/* Left Column */}
           <div className="col-span-8 space-y-6">
-            {/* Incident Report Card */}
+            {/* Incident Report */}
             <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
               <div className="flex justify-between items-center mb-6">
                 <div className="flex items-center gap-2 font-bold text-slate-800">
@@ -91,14 +74,10 @@ const CaseDetailsPage = () => {
               </div>
               <div className="text-slate-600 text-sm leading-relaxed space-y-4">
                 <p>
-                  The victim reported a severe incident of domestic violence occurring at her residence in Abeokuta South. 
-                  According to the statement, the perpetrator (identified as the spouse) returned home in an intoxicated state around 14:00 hours on Oct 24, 2023. 
-                  A verbal altercation escalated rapidly into physical assault involving a blunt object.
+                  The victim reported a severe incident of domestic violence occurring at her residence in Abeokuta South. According to the statement, the perpetrator (spouse) returned home intoxicated around 14:00 on Oct 24, 2023. A verbal altercation escalated into physical assault involving a blunt object.
                 </p>
                 <p>
-                  Neighbors intervened after hearing distress calls and contacted the local shelter hotline. 
-                  The victim sustained visible injuries to the upper arm and facial area. 
-                  Preliminary medical attention was provided on-site by the response team before transfer to the shelter.
+                  Neighbors intervened after hearing distress calls and contacted the local shelter hotline. The victim sustained visible injuries to the upper arm and facial area. Preliminary medical attention was provided on-site before transfer to the shelter.
                 </p>
               </div>
               <div className="mt-8 bg-sky-50 rounded-lg p-4 border border-sky-100">
@@ -113,7 +92,7 @@ const CaseDetailsPage = () => {
               </div>
             </div>
 
-            {/* Evidence Vault Card */}
+            {/* Evidence Vault */}
             <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
               <div className="flex justify-between items-center mb-6">
                 <div className="flex items-center gap-2 font-bold text-slate-800">
@@ -124,7 +103,7 @@ const CaseDetailsPage = () => {
                   <Upload size={14} /> Add Evidence
                 </button>
               </div>
-              
+
               <div className="flex border-b border-slate-100 mb-6">
                 <Tab label="Images (3)" active />
                 <Tab label="Audio (1)" />
@@ -155,9 +134,9 @@ const CaseDetailsPage = () => {
             </div>
           </div>
 
-          {/* Right Column (Risk and Victim) */}
+          {/* Right Column */}
           <div className="col-span-4 space-y-6">
-            {/* AI Risk Analysis Card */}
+            {/* AI Risk Analysis */}
             <div className="bg-white rounded-xl border-t-4 border-t-orange-400 border border-slate-200 shadow-sm p-6">
               <div className="flex items-center gap-2 mb-6">
                 <div className="bg-violet-600 p-1.5 rounded-md">
@@ -169,7 +148,7 @@ const CaseDetailsPage = () => {
               <div className="flex justify-between items-center bg-red-50 p-4 rounded-lg mb-6">
                 <span className="text-xs font-bold text-red-800">Risk Level</span>
                 <span className="bg-red-600 text-white text-[10px] px-3 py-1 rounded-md font-bold flex items-center gap-1">
-                   <AlertTriangle size={12} /> CRITICAL
+                  <AlertTriangle size={12} /> CRITICAL
                 </span>
               </div>
 
@@ -188,7 +167,7 @@ const CaseDetailsPage = () => {
               </div>
             </div>
 
-            {/* Victim Details Card */}
+            {/* Victim Details */}
             <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
               <div className="flex items-center gap-2 mb-6 text-slate-800">
                 <User size={18} />
@@ -197,7 +176,7 @@ const CaseDetailsPage = () => {
 
               <div className="flex items-center gap-4 mb-6">
                 <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center">
-                   <User size={24} className="text-slate-400" />
+                  <User size={24} className="text-slate-400" />
                 </div>
                 <div>
                   <h4 className="font-bold">Amina Johnson</h4>
@@ -206,18 +185,21 @@ const CaseDetailsPage = () => {
               </div>
 
               <div className="space-y-4">
-                <DetailItem label="Phone Number (Redacted)" value="+234 803 123 ****" icon={<Phone size={14}/>} />
-                <DetailItem label="Primary Language" value="Yoruba, English" icon={<Languages size={14}/>} />
+                <DetailItem label="Phone Number (Redacted)" value="+234 803 123 ****" icon={<Phone size={14} />} />
+                <DetailItem label="Primary Language" value="Yoruba, English" icon={<Languages size={14} />} />
                 <DetailItem label="Registered Address LGA" value="Abeokuta South" />
               </div>
             </div>
 
+            {/* Officer Actions */}
             <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
-                <div className="flex items-center gap-2 mb-6 text-slate-800">
-                  <User size={18} />
-                  <h3 className="text-sm font-bold uppercase">Officer Actions</h3>
-                </div>
-                <button className="w-full bg-sky-500 text-white font-bold py-3 rounded-xl text-sm shadow-lg shadow-sky-200">Update Status</button>
+              <div className="flex items-center gap-2 mb-6 text-slate-800">
+                <User size={18} />
+                <h3 className="text-sm font-bold uppercase">Officer Actions</h3>
+              </div>
+              <button className="w-full bg-sky-500 text-white font-bold py-3 rounded-xl text-sm shadow-lg shadow-sky-200">
+                Update Status
+              </button>
             </div>
           </div>
         </div>
@@ -226,14 +208,7 @@ const CaseDetailsPage = () => {
   );
 };
 
-// --- Sub-Components for Clean Code ---
-
-const NavItem = ({ icon, label, active = false }) => (
-  <div className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-colors ${active ? 'bg-sky-50 text-sky-600 font-bold' : 'text-slate-500 hover:bg-slate-50'}`}>
-    {icon}
-    <span className="text-sm">{label}</span>
-  </div>
-);
+// --- Sub-Components ---
 
 const Tab = ({ label, active = false }) => (
   <div className={`px-4 py-2 text-xs font-bold cursor-pointer border-b-2 transition-colors ${active ? 'border-sky-500 text-sky-600' : 'border-transparent text-slate-400 hover:text-slate-600'}`}>
@@ -246,9 +221,7 @@ const EvidenceThumbnail = ({ label }) => (
     <div className="aspect-video bg-slate-100 rounded-lg border border-slate-200 flex items-center justify-center overflow-hidden">
       <FileImage size={32} className="text-slate-300" />
     </div>
-    <div className="bg-slate-700 text-white text-[9px] px-2 py-1 rounded truncate">
-      {label}
-    </div>
+    <div className="bg-slate-700 text-white text-[9px] px-2 py-1 rounded truncate">{label}</div>
   </div>
 );
 
