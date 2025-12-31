@@ -7,6 +7,8 @@ import FileUpload from '@/app/components/FileUpload';
 import InfoCard from '@/app/components/InfoCard';
 import { Lock, EyeOff, Heart, AlertCircle, CheckCircle2, ChevronRight, ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
+import Image from "next/image";
+import Logo from "@/public/logo.png";
 
 const steps = [
   { id: 1, name: 'Personal Info' },

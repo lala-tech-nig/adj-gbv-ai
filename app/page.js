@@ -18,6 +18,9 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
+
+import Logo from "./../public/logo.png";
 
 // Animation Variants
 const fadeIn = {
@@ -42,11 +45,19 @@ const Navbar = () => (
     className="sticky top-0 z-50 flex items-center justify-between px-6 py-4 bg-white/80 backdrop-blur-md border-b border-gray-100"
   >
     <div className="flex items-center gap-2">
+
       <motion.div 
         whileHover={{ rotate: 10 }}
-        className="bg-green-100 p-2 rounded-lg"
+        className="relative w-12 h-12" // Container to control size
       >
-        <Shield className="w-5 h-5 text-green-700" />
+        <Image 
+          src={Logo} 
+          alt="Ogun State Logo" 
+          width={48} 
+          height={48} 
+          className="object-contain"
+          priority
+        />
       </motion.div>
       <div>
         <h1 className="text-sm font-bold text-gray-900 leading-tight">

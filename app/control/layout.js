@@ -17,6 +17,9 @@ import {
   ChevronRight,
 } from "lucide-react";
 
+import Image from "next/image";
+import Logo from "@/public/logo.png";
+
 /* ---------------- NAV CONFIG ---------------- */
 const navItems = [
   { label: "Dashboard", href: "/control", icon: LayoutDashboard },
@@ -61,15 +64,21 @@ export default function DashboardLayout({ children }) {
       {/* ================= DESKTOP SIDEBAR ================= */}
       <aside className="hidden md:flex w-72 bg-white border-r border-slate-200 flex-col p-6 sticky top-0 h-screen">
         {/* Logo */}
-        <div className="flex items-center space-x-3 mb-10 px-2">
-          <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-200">
-            <LayoutDashboard size={22} />
-          </div>
-          <div>
-            <h1 className="text-sm font-bold tracking-tight">Ogun State MWA</h1>
-            <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Officer Portal</p>
-          </div>
-        </div>
+<div className="flex items-center space-x-3 mb-10 px-2">
+  <div className="w-10 h-10 relative rounded-xl flex items-center justify-center shadow-lg shadow-blue-200 overflow-hidden">
+    <Image
+      src={Logo}
+      alt="Ogun State MWA Logo"
+      fill
+      className="object-contain"
+      priority
+    />
+  </div>
+  <div>
+    <h1 className="text-sm font-bold tracking-tight">Ogun State MWA</h1>
+    <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Officer Portal</p>
+  </div>
+</div>
 
         {/* Nav */}
         <nav className="flex-1 space-y-1">
