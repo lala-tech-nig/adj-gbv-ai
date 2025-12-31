@@ -126,7 +126,7 @@ const Hero = () => (
           </motion.button>
         </Link>
 
-        <Link href="/emergency">
+        <Link href="/report">
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -162,7 +162,7 @@ const Hero = () => (
           className="bg-white p-4 rounded-2xl shadow-2xl relative z-10"
         >
           <img
-            src="https://img.freepik.com/free-vector/flat-design-international-women-s-day-illustration_23-2149298282.jpg"
+            src="/image.png"
             alt="Support"
             className="max-w-[300px] md:max-w-[400px] rounded-xl"
           />
