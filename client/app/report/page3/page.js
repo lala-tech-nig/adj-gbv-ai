@@ -1,18 +1,21 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import MainLayout from '@/app/components/MainLayout';
-import FileUpload from '@/app/components/FileUpload';
-import InfoCard from '@/app/components/InfoCard';
-import { ShieldCheck, Clock, ShieldAlert, ChevronRight, Mic, Lock } from 'lucide-react';
+import { ShieldCheck, Clock, ShieldAlert, ChevronRight, Mic, Lock, UploadCloud, ChevronLeft, X } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useReportContext } from '../ReportContext';
+import axios from 'axios';
 
 const steps = [
   { id: 1, name: 'Personal Info' },
-  { id: 2, name: 'Incident Details' },
+  { id: 2, name: 'Incident' },
   { id: 3, name: 'Evidence' },
-  { id: 4, name: 'Review' }
+  { id: 4, name: 'Safety' },
+  { id: 5, name: 'Review' },
+  { id: 6, name: 'Submit' }
 ];
 
 // Animation Variants
@@ -34,152 +37,208 @@ const itemVariants = {
 };
 
 export default function EvidenceUpload() {
+  const { formData, updateFormData } = useReportContext();
+  const router = useRouter();
+  const [isUploading, setIsUploading] = useState(false);
+
+  const SERVER_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
+  const handleFileUpload = async (e) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setIsUploading(true);
+    const formDataPayload = new FormData();
+    for (let i = 0; i < files.length; i++) {
+      formDataPayload.append('images', files[i]);
+    }
+
+    try {
+      const res = await axios.post(`${SERVER_URL}/api/reports/upload-evidence`, formDataPayload, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      // Append new URLs to the context state
+      const newUrls = res.data.urls || [];
+      updateFormData({ mediaUrls: [...formData.mediaUrls, ...newUrls] });
+    } catch (err) {
+      console.error("Upload failed", err);
+      alert("Failed to upload evidence. Please try again or skip.");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const removeFile = (indexToRemove) => {
+    const updated = formData.mediaUrls.filter((_, idx) => idx !== indexToRemove);
+    updateFormData({ mediaUrls: updated });
+  };
+
+  const handleNext = () => {
+    router.push('/report/page4');
+  };
+
   return (
     <MainLayout steps={steps} currentStep={3} title="Evidence Upload">
-      <motion.div 
+      <motion.div
         initial="hidden"
         animate="visible"
         variants={containerVariants}
-        className="max-w-6xl mx-auto"
+        className="grid grid-cols-1 lg:grid-cols-3 gap-8"
       >
-        {/* Header Section */}
-        <motion.div variants={itemVariants} className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Secure Evidence Collection</h2>
-          <p className="text-gray-500 max-w-2xl">
-            Please share any files that might support your report. This is optional. 
-            Only share what you are comfortable with.
-          </p>
-        </motion.div>
+        {/* Main Upload Area */}
+        <div className="lg:col-span-2 space-y-6">
 
-        {/* Encryption Badge */}
-        <motion.div 
-          variants={itemVariants}
-          whileHover={{ scale: 1.02 }}
-          className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-100 rounded-2xl px-5 py-4 flex items-center gap-4 mb-8 w-fit shadow-sm"
-        >
-          <div className="bg-green-500 p-2 rounded-full">
-            <Lock className="text-white" size={18} />
-          </div>
-          <p className="text-green-800 text-sm">
-            <span className="font-bold block">End-to-end Encrypted Uploads</span>
-            <span className="opacity-80">Your privacy is our priority. Files are encrypted before they leave your device.</span>
-          </p>
-        </motion.div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Upload Area */}
-          <div className="lg:col-span-2 space-y-6">
-            <motion.div 
-              variants={itemVariants}
-              className="bg-white p-8 rounded-2xl border border-gray-100 shadow-xl shadow-gray-200/50"
-            >
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-bold flex items-center gap-2">
-                  Attach Evidence 
-                  <span className="text-xs font-normal bg-gray-100 px-2 py-1 rounded text-gray-500 uppercase">Optional</span>
-                </h3>
-              </div>
-              <FileUpload initialFiles={[]} />
-            </motion.div>
-
-            <motion.div 
-              variants={itemVariants}
-              whileHover={{ borderColor: "#3b82f6" }}
-              className="border-2 border-dashed border-gray-200 rounded-2xl p-6 bg-blue-50/30 transition-colors"
-            >
-              <div className="flex gap-4">
-                <div className="bg-white p-3 rounded-full shadow-sm h-fit">
-                  <Mic className="text-blue-600" size={24} />
-                </div>
-                <div>
-                  <h4 className="font-bold text-gray-900 mb-1">Record Voice Note</h4>
-                  <p className="text-sm text-gray-600 mb-4">
-                    If typing is difficult, you can speak your story directly. Your voice is a powerful form of evidence.
-                  </p>
-                  <button className="text-blue-600 font-bold text-sm hover:underline flex items-center gap-1">
-                    Open Recorder <ChevronRight size={14} />
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-
-          {/* Sidebar Info */}
-          <motion.aside variants={itemVariants} className="space-y-6">
-            <div className="border border-gray-100 rounded-3xl p-8 bg-white shadow-lg shadow-gray-100/50 relative overflow-hidden">
-              {/* Decorative background shape */}
-              <div className="absolute -top-10 -right-10 w-32 h-32 bg-blue-50 rounded-full blur-3xl" />
-              
-              <h3 className="font-bold text-lg mb-6 relative z-10">Why upload evidence?</h3>
-              
-              <div className="space-y-6 relative z-10">
-                <InfoCard 
-                  icon={ShieldCheck} 
-                  color="text-green-600" 
-                  title="Legal Support" 
-                  description="Digital evidence can be crucial for legal proceedings or obtaining protection orders." 
-                />
-                <InfoCard 
-                  icon={Clock} 
-                  color="text-blue-600" 
-                  title="Timeline Verification" 
-                  description="Metadata preserves timestamps to verify exactly when incidents occurred." 
-                />
-                <InfoCard 
-                  icon={ShieldAlert} 
-                  color="text-orange-500" 
-                  title="Safety First" 
-                  description="Uploading here allows you to safely delete sensitive files from your personal phone." 
-                />
-              </div>
-
-              <motion.div 
-                whileHover={{ x: 5 }}
-                className="mt-10 pt-6 border-t border-gray-100 group cursor-pointer"
-              >
-                <div className="bg-gray-50 group-hover:bg-blue-50 transition-colors rounded-2xl p-4 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white shadow-sm">
-                      <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="Support" />
-                    </div>
-                    <div>
-                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Need Assistance?</p>
-                      <p className="text-sm font-bold text-blue-900">Chat with a Specialist</p>
-                    </div>
-                  </div>
-                  <ChevronRight size={18} className="text-blue-400 group-hover:text-blue-600 transition-colors" />
-                </div>
-              </motion.div>
+          <motion.div
+            variants={itemVariants}
+            className="bg-zinc-50 border border-zinc-200 rounded-3xl p-6 flex items-center gap-4 w-full shadow-sm"
+          >
+            <div className="bg-green-500 p-3 rounded-xl flex items-center justify-center shadow-lg shadow-green-500/20">
+              <Lock className="text-black" size={24} />
             </div>
-          </motion.aside>
+            <p className="text-black text-sm">
+              <span className="font-black block text-base">End-to-end Encrypted Uploads</span>
+              <span className="text-zinc-500 font-bold">Your privacy is our priority. Files are encrypted before they leave your device and stripped of metadata.</span>
+            </p>
+          </motion.div>
+
+          <motion.div
+            variants={itemVariants}
+            className="bg-white p-8 rounded-3xl border border-zinc-200 shadow-sm"
+          >
+            <div className="flex items-center justify-between mb-8">
+              <h3 className="text-xl font-black flex items-center gap-3">
+                <div className="p-2 bg-zinc-100 rounded-xl">
+                  <UploadCloud size={20} className="text-black" />
+                </div>
+                Attach Evidence
+              </h3>
+              <span className="text-xs font-bold bg-zinc-100 px-3 py-1.5 rounded-full text-zinc-500 uppercase tracking-widest">Optional</span>
+            </div>
+
+            {/* Custom File Upload UI */}
+            <div className="border-2 border-dashed border-zinc-300 bg-zinc-50 rounded-2xl p-10 text-center hover:bg-zinc-100 hover:border-green-500 transition-colors cursor-pointer group mb-6 flex flex-col items-center justify-center relative">
+              <input
+                type="file"
+                multiple
+                accept="image/*,video/*,audio/*"
+                onChange={handleFileUpload}
+                disabled={isUploading}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
+              />
+              <div className="bg-white p-4 rounded-full shadow-sm mb-4 group-hover:bg-green-500 text-zinc-400 group-hover:text-black transition-colors">
+                <UploadCloud size={32} />
+              </div>
+              <p className="font-black text-black mb-1 text-lg">
+                {isUploading ? "Encrypting & Uploading..." : "Click to upload or drag files here"}
+              </p>
+              <p className="text-xs font-bold text-zinc-500">Audio, Video, or Images accepted. Files are wiped securely.</p>
+            </div>
+
+            {/* Uploaded Files Preview */}
+            {formData.mediaUrls.length > 0 && (
+              <div className="mt-8">
+                <h4 className="font-black text-sm uppercase tracking-widest text-zinc-400 mb-4">Secured Files</h4>
+                <div className="space-y-3">
+                  {formData.mediaUrls.map((url, idx) => (
+                    <div key={idx} className="flex items-center justify-between p-4 border border-green-500/30 bg-green-50/50 rounded-xl">
+                      <div className="flex items-center gap-3 overflow-hidden">
+                        <Check className="text-green-600 shrink-0" size={16} />
+                        <span className="text-xs font-bold text-green-900 truncate">encrypted_evidence_{idx + 1}.dat</span>
+                      </div>
+                      <button onClick={() => removeFile(idx)} className="p-2 hover:bg-red-100 text-red-500 rounded-lg transition-colors">
+                        <X size={16} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </motion.div>
+
+          <motion.div
+            variants={itemVariants}
+            className="border border-zinc-200 rounded-3xl p-8 bg-black text-white transition-colors"
+          >
+            <div className="flex gap-4">
+              <div className="bg-zinc-800 p-4 rounded-full h-fit">
+                <Mic className="text-green-500" size={24} />
+              </div>
+              <div>
+                <h4 className="font-black text-lg mb-1">Record Voice Note</h4>
+                <p className="text-sm text-zinc-400 font-medium mb-4 leading-relaxed">
+                  If typing is difficult, you can speak your story directly. Your voice is a powerful form of evidence.
+                </p>
+                <button className="text-green-400 font-bold text-sm hover:underline flex items-center gap-1 uppercase tracking-widest">
+                  Open Recorder <ChevronRight size={14} />
+                </button>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Footer Actions */}
+          <motion.div
+            variants={itemVariants}
+            className="mt-8 flex flex-col sm:flex-row items-center justify-between pt-8 gap-4"
+          >
+            <Link href="/report/page2">
+              <button className="px-8 py-4 rounded-xl border border-zinc-200 font-black text-zinc-500 hover:bg-zinc-100 hover:text-black transition-all uppercase tracking-widest text-xs flex items-center gap-2">
+                <ChevronLeft size={18} /> Back
+              </button>
+            </Link>
+
+            <div className="flex flex-col sm:flex-row items-center gap-6 w-full sm:w-auto">
+              <button onClick={handleNext} className="text-xs font-black text-zinc-400 hover:text-black transition-colors uppercase tracking-widest">
+                Skip for now
+              </button>
+              <button
+                onClick={handleNext}
+                className="w-full sm:w-auto bg-black hover:bg-zinc-800 text-white px-10 py-4 rounded-xl font-black flex items-center justify-center gap-2 shadow-xl shadow-black/10 transition-all uppercase tracking-widest text-xs group"
+              >
+                Continue <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
+              </button>
+            </div>
+          </motion.div>
+
         </div>
 
-        {/* Footer Actions */}
-        <motion.div 
-          variants={itemVariants}
-          className="mt-12 flex flex-col sm:flex-row items-center justify-between py-8 border-t border-gray-100 gap-4"
-        >
-          <Link href="/report/page2">
-            <button className="px-8 py-3 rounded-xl border border-gray-200 font-semibold text-gray-600 hover:bg-gray-50 transition-all">
-              Back
-            </button>
-          </Link>
-          
-          <div className="flex flex-col sm:flex-row items-center gap-6">
-            <button className="text-sm font-semibold text-gray-400 hover:text-gray-600 transition-colors">
-              Skip for now
-            </button>
-            <Link href="/report/page4">
-              <motion.button 
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.98 }}
-                className="bg-blue-600 text-white px-10 py-4 rounded-2xl font-bold flex items-center gap-2 shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all"
-              >
-                Continue to Review <ChevronRight size={20} />
-              </motion.button>
-            </Link>
+        {/* Sidebar Info */}
+        <motion.aside variants={itemVariants} className="space-y-6">
+          <div className="bg-black rounded-3xl p-8 shadow-xl relative overflow-hidden text-white">
+            <div className="absolute -top-10 -right-10 opacity-20">
+              <ShieldCheck size={140} className="text-green-500" />
+            </div>
+
+            <h3 className="font-black text-xl mb-6 relative z-10 text-white flex items-center gap-3">
+              <ShieldCheck className="text-green-500" /> Trust Protocol
+            </h3>
+
+            <div className="space-y-6 relative z-10">
+              <div className="flex gap-3">
+                <ShieldCheck className="text-green-500 shrink-0 mt-0.5" size={18} />
+                <div>
+                  <h5 className="font-bold text-sm text-green-400">Legal Support</h5>
+                  <p className="text-xs text-zinc-400 font-medium">Digital evidence can be crucial for legal proceedings.</p>
+                </div>
+              </div>
+              <div className="flex gap-3">
+                <Clock className="text-green-500 shrink-0 mt-0.5" size={18} />
+                <div>
+                  <h5 className="font-bold text-sm text-green-400">Timeline Verification</h5>
+                  <p className="text-xs text-zinc-400 font-medium">Metadata preserves timestamps to verify when incidents occurred.</p>
+                </div>
+              </div>
+              <div className="flex gap-3">
+                <ShieldAlert className="text-green-500 shrink-0 mt-0.5" size={18} />
+                <div>
+                  <h5 className="font-bold text-sm text-green-400">Safety First</h5>
+                  <p className="text-xs text-zinc-400 font-medium">Uploading here allows you to safely delete files from your phone.</p>
+                </div>
+              </div>
+            </div>
           </div>
-        </motion.div>
+        </motion.aside>
       </motion.div>
     </MainLayout>
   );

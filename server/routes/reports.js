@@ -1,6 +1,42 @@
 const express = require('express');
 const router = express.Router();
 const Report = require('../models/Report');
+const multer = require('multer');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const cloudinary = require('cloudinary').v2;
+require('dotenv').config();
+
+// Base config for Cloudinary if available, otherwise fallback
+if (process.env.CLOUDINARY_CLOUD_NAME) {
+    cloudinary.config({
+        cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+        api_key: process.env.CLOUDINARY_API_KEY,
+        api_secret: process.env.CLOUDINARY_API_SECRET
+    });
+}
+
+// Set up Multer Storage
+const storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+        folder: 'adj_gbv_evidence',
+        allowed_formats: ['jpg', 'png', 'jpeg', 'mp4', 'mp3', 'wav', 'pdf'],
+    },
+});
+const upload = multer({ storage: storage });
+
+// Upload Endpoint
+router.post('/upload-evidence', upload.array('images', 5), (req, res) => {
+    try {
+        if (!req.files || req.files.length === 0) {
+            return res.status(400).json({ message: "No files provided." });
+        }
+        const urls = req.files.map(f => f.path);
+        res.status(200).json({ urls });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
 
 // Dummy AI implementation as requested for the prototype
 const analyzeGBVReport = (text) => {
@@ -30,16 +66,27 @@ const analyzeGBVReport = (text) => {
 // Create a new report
 router.post('/', async (req, res) => {
     try {
-        const { title, description, location, incidentDate, mediaUrls } = req.body;
+        const {
+            title, narrative, location, incidentDate, mediaUrls,
+            firstName, lastName, phone, email, timeSlot, contactMethod, noPriorNotice
+        } = req.body;
 
         // Perform simulated AI Analysis
-        const { score, analysis } = analyzeGBVReport(title + " " + description);
+        const textToAnalyze = (title || "") + " " + (narrative || "");
+        const { score, analysis } = analyzeGBVReport(textToAnalyze);
 
         const newReport = new Report({
             title,
-            description,
+            narrative,
             location,
             incidentDate,
+            firstName,
+            lastName,
+            phone,
+            email,
+            timeSlot,
+            contactMethod,
+            noPriorNotice,
             mediaUrls: mediaUrls || [],
             aiRiskScore: score,
             aiAnalysis: analysis
@@ -47,8 +94,9 @@ router.post('/', async (req, res) => {
 
         const savedReport = await newReport.save();
 
-        // Emit event to all connected clients for real-time updates
-        req.io.emit('new_report', savedReport);
+        if (req.io) {
+            req.io.emit('new_report', savedReport);
+        }
 
         res.status(201).json(savedReport);
     } catch (error) {
@@ -82,8 +130,9 @@ router.put('/:id/status', async (req, res) => {
         const { status } = req.body;
         const report = await Report.findByIdAndUpdate(req.params.id, { status }, { new: true });
 
-        // Emit event for real-time update
-        req.io.emit('report_updated', report);
+        if (req.io) {
+            req.io.emit('report_updated', report);
+        }
 
         res.json(report);
     } catch (error) {

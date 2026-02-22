@@ -216,15 +216,8 @@ export default function DashboardPage() {
     recentCritical: []
   });
 
-  // Mocking the monthly data for the chart since the DB is likely empty atm
-  const defaultChartData = [
-    { name: 'Jan', cases: 20 },
-    { name: 'Feb', cases: 35 },
-    { name: 'Mar', cases: 25 },
-    { name: 'Apr', cases: 50 },
-    { name: 'May', cases: 45 },
-    { name: 'Jun', cases: 70 },
-  ];
+  // No dummy data, wait for real DB stats
+  const defaultChartData = [];
 
   useEffect(() => {
     const token = localStorage.getItem('adminToken');
@@ -288,16 +281,12 @@ export default function DashboardPage() {
 
   const displayCritical = stats.recentCritical && stats.recentCritical.length > 0
     ? stats.recentCritical
-    : [
-      { _id: 'GBV-894', title: "Immediate Risk Protocol", aiAnalysis: "High Threat", aiRiskScore: 95 },
-      { _id: 'GBV-881', title: "Ongoing Abuse Reported", aiAnalysis: "Medical Aid", aiRiskScore: 82 },
-      { _id: 'GBV-865', title: "Physical Altercation", aiAnalysis: "Dispatch Required", aiRiskScore: 78 }
-    ];
+    : [];
 
   return (
     <div className="min-h-screen bg-zinc-50 font-sans">
       {/* Top Banner indicating Real-Time Status */}
-      <div className={`w-full py-2 px-6 flex justify-between items-center text-xs font-bold uppercase tracking-widest text-white transition-colors duration-500 ${isConnected ? 'bg-green-600' : 'bg-red-500'}`}>
+      <div className={`w-full py-2 px-6 flex justify-between items-center text-xs font-bold uppercase tracking-widest text-white transition-colors duration-500 ${isConnected ? 'bg-green-500 text-black' : 'bg-black text-white'}`}>
         <div className="flex items-center gap-2">
           {isConnected ? <Wifi className="w-4 h-4 animate-pulse" /> : <WifiOff className="w-4 h-4" />}
           {isConnected ? "Live Socket.io Connection Active • AI Stream Connected" : "Connection Lost • Reconnecting to AI Stream..."}
@@ -327,9 +316,9 @@ export default function DashboardPage() {
               Privacy Mode
             </button>
 
-            <div className="relative p-2.5 bg-white border border-zinc-200 rounded-xl text-zinc-500 hover:text-green-600 cursor-pointer transition-colors shadow-sm">
+            <div className="relative p-2.5 bg-white border border-zinc-200 rounded-xl text-zinc-500 hover:text-green-500 cursor-pointer transition-colors shadow-sm">
               <Bell size={20} />
-              <span className="absolute top-2.5 right-2.5 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white ring-2 ring-red-100 animate-pulse" />
+              <span className="absolute top-2.5 right-2.5 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white ring-2 ring-green-100 animate-pulse" />
             </div>
 
             <button className="flex-1 md:flex-none bg-black hover:bg-zinc-800 text-white px-6 py-2.5 rounded-xl flex items-center justify-center space-x-2 text-sm font-bold transition-all shadow-lg shadow-black/20">
@@ -344,10 +333,10 @@ export default function DashboardPage() {
           variants={staggerContainer}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10"
         >
-          <StatCard title="Total Cases" value={stats.totalReports} icon={Briefcase} trend="+12.5%" trendColor="text-green-600" subtext="Live Data" iconBg="text-green-600 bg-green-500" />
-          <StatCard title="High Risk (AI)" value={stats.highRiskReports} icon={Brain} trend="Critical" trendColor="text-red-500" subtext="Requires Attention" iconBg="text-red-500 bg-red-500" />
-          <StatCard title="Pending Review" value={stats.pendingReports} icon={Clock} trend="Action" trendColor="text-orange-500" subtext="In Queue" iconBg="text-orange-500 bg-orange-500" />
-          <StatCard title="Resolved" value={stats.resolvedReports} icon={AlertCircle} trend="Stable" trendColor="text-zinc-500" subtext="Successfully closed" iconBg="text-zinc-500 bg-zinc-500" />
+          <StatCard title="Total Cases" value={stats.totalReports} icon={Briefcase} trend="+12.5%" trendColor="text-green-500" subtext="Live Data" iconBg="text-green-500 bg-green-500" />
+          <StatCard title="High Risk (AI)" value={stats.highRiskReports} icon={Brain} trend="Critical" trendColor="text-black" subtext="Requires Attention" iconBg="text-white bg-black" />
+          <StatCard title="Pending Review" value={stats.pendingReports} icon={Clock} trend="Action" trendColor="text-zinc-800" subtext="In Queue" iconBg="text-zinc-800 bg-zinc-800" />
+          <StatCard title="Resolved" value={stats.resolvedReports} icon={AlertCircle} trend="Stable" trendColor="text-zinc-400" subtext="Successfully closed" iconBg="text-zinc-400 bg-zinc-400" />
         </motion.div>
 
         {/* Middle Visuals */}
@@ -401,8 +390,8 @@ export default function DashboardPage() {
 
               <div className="space-y-6">
                 {[
-                  { label: "Critical Priority", val: "15%", color: "bg-red-500" },
-                  { label: "Elevated Risk", val: "30%", color: "bg-orange-500" },
+                  { label: "Critical Priority", val: "15%", color: "bg-white" },
+                  { label: "Elevated Risk", val: "30%", color: "bg-zinc-500" },
                   { label: "Baseline Monitoring", val: "55%", color: "bg-green-500" }
                 ].map((item, idx) => (
                   <div key={idx}>
@@ -443,8 +432,8 @@ export default function DashboardPage() {
             <div className="flex justify-between items-center mb-8">
               <h4 className="font-black text-xl flex items-center gap-3 tracking-tight">
                 <div className="relative flex h-3 w-3">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
                 </div>
                 Urgent Response Queue
               </h4>
@@ -454,18 +443,22 @@ export default function DashboardPage() {
             </div>
 
             <motion.div variants={staggerContainer} className="space-y-3">
-              {displayCritical.map((item, idx) => (
+              {displayCritical.length > 0 ? displayCritical.map((item, idx) => (
                 <CriticalRow
                   key={idx}
                   name={item.title || "Unknown Incident"}
                   id={item._id.substring(item._id.length - 6).toUpperCase()}
                   tag={item.aiAnalysis || "Pending"}
-                  tagBg={item.aiRiskScore > 80 ? "bg-red-50 border-red-200" : "bg-orange-50 border-orange-200"}
-                  tagText={item.aiRiskScore > 80 ? "text-red-600" : "text-orange-600"}
+                  tagBg={item.aiRiskScore > 80 ? "bg-black border-black" : "bg-zinc-100 border-zinc-200"}
+                  tagText={item.aiRiskScore > 80 ? "text-white" : "text-black"}
                   action="Triage"
                   score={item.aiRiskScore}
                 />
-              ))}
+              )) : (
+                <div className="p-10 text-center border-2 border-dashed border-zinc-200 rounded-2xl">
+                  <p className="text-zinc-500 font-bold uppercase tracking-widest text-xs">No Critical Incidents</p>
+                </div>
+              )}
             </motion.div>
           </motion.div>
 
