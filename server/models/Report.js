@@ -10,6 +10,7 @@ const reportSchema = new mongoose.Schema({
     lastName: { type: String, required: false },
     phone: { type: String, required: false },
     email: { type: String, required: false },
+    address: { type: String, required: false }, // Explicit address field
     timeSlot: { type: String, required: false },
     contactMethod: { type: String, required: false },
     noPriorNotice: { type: Boolean, default: false },

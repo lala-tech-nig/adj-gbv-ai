@@ -76,7 +76,7 @@ router.post('/', async (req, res) => {
     try {
         const {
             title, narrative, location, incidentDate, mediaUrls,
-            firstName, lastName, phone, email, timeSlot, contactMethod, noPriorNotice
+            firstName, lastName, address, phone, email, timeSlot, contactMethod, noPriorNotice
         } = req.body;
 
         // Perform simulated AI Analysis
@@ -90,6 +90,7 @@ router.post('/', async (req, res) => {
             incidentDate,
             firstName,
             lastName,
+            address,
             phone,
             email,
             timeSlot,

@@ -3,7 +3,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import MainLayout from '@/app/components/MainLayout';
-import { ShieldCheck, Clock, ShieldAlert, Lock, ArrowRight, User } from 'lucide-react';
+import { ShieldCheck, Clock, ShieldAlert, Lock, ArrowRight, User, MapPin } from 'lucide-react';
 import Link from 'next/link';
 import { useReportContext } from './ReportContext';
 import { useRouter } from 'next/navigation';
@@ -40,9 +40,46 @@ export default function ReportStart() {
     updateFormData({ [e.target.name]: e.target.value });
   };
 
+  const [isLocating, setIsLocating] = useState(false);
+
   const handleNext = (e) => {
     e.preventDefault();
     router.push('/report/page2');
+  };
+
+  const handleAutoLocate = () => {
+    if (!navigator.geolocation) {
+      alert("Geolocation is not supported by your browser");
+      return;
+    }
+
+    setIsLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+        try {
+          // Use OpenStreetMap Nominatim for free reverse geocoding
+          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+          const data = await res.json();
+          if (data && data.display_name) {
+            updateFormData({ address: data.display_name, location: data.display_name });
+          } else {
+            // Fallback to coordinates
+            updateFormData({ address: `${latitude}, ${longitude}`, location: `${latitude}, ${longitude}` });
+          }
+        } catch (err) {
+          console.error("Reverse geocoding failed", err);
+          updateFormData({ address: `${latitude}, ${longitude}`, location: `${latitude}, ${longitude}` });
+        } finally {
+          setIsLocating(false);
+        }
+      },
+      (error) => {
+        console.error("Geolocation error", error);
+        alert("Unable to retrieve your location. Please check your permissions.");
+        setIsLocating(false);
+      }
+    );
   };
 
   return (
@@ -73,7 +110,6 @@ export default function ReportStart() {
                 {[
                   { label: 'First name', name: 'firstName', type: 'text' },
                   { label: 'Last name', name: 'lastName', type: 'text' },
-                  { label: 'Address', name: 'address', type: 'text' },
                   { label: 'Phone', name: 'phone', type: 'tel' },
                   { label: 'Email', name: 'email', type: 'email' }
                 ].map((field) => (
@@ -89,6 +125,30 @@ export default function ReportStart() {
                     />
                   </div>
                 ))}
+
+                {/* Specific Address Field with Auto-Location */}
+                <div className="space-y-2 md:col-span-2">
+                  <label className="text-xs font-black text-black uppercase tracking-widest">Address / Location</label>
+                  <div className="relative">
+                    <input
+                      name="address"
+                      value={formData.address || ''}
+                      onChange={handleChange}
+                      type="text"
+                      className="w-full p-4 pr-32 rounded-xl border border-zinc-200 bg-zinc-50 focus:bg-white focus:ring-2 focus:ring-green-500/50 focus:border-green-500 outline-none transition-all font-medium"
+                      placeholder="Address (optional)"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleAutoLocate}
+                      disabled={isLocating}
+                      className={`absolute right-2 top-2 bottom-2 px-4 rounded-lg font-bold text-xs flex items-center gap-2 transition-colors ${isLocating ? 'bg-zinc-200 text-zinc-500' : 'bg-black text-white hover:bg-zinc-800'}`}
+                    >
+                      <MapPin size={14} />
+                      {isLocating ? 'Locating...' : 'Auto Pick'}
+                    </button>
+                  </div>
+                </div>
               </div>
 
               <div className="mt-8 flex items-center gap-3 p-4 bg-green-50 rounded-xl border border-green-100">
