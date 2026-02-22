@@ -73,6 +73,7 @@ export default function ReportStart() {
                 {[
                   { label: 'First name', name: 'firstName', type: 'text' },
                   { label: 'Last name', name: 'lastName', type: 'text' },
+                  { label: 'Address', name: 'address', type: 'text' },
                   { label: 'Phone', name: 'phone', type: 'tel' },
                   { label: 'Email', name: 'email', type: 'email' }
                 ].map((field) => (

@@ -15,27 +15,35 @@ if (process.env.CLOUDINARY_CLOUD_NAME) {
     });
 }
 
-// Set up Multer Storage
 const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
     params: {
         folder: 'adj_gbv_evidence',
-        allowed_formats: ['jpg', 'png', 'jpeg', 'mp4', 'mp3', 'wav', 'pdf'],
+        resource_type: 'auto',
+        allowed_formats: ['jpg', 'png', 'jpeg', 'mp4', 'mp3', 'wav', 'pdf', 'webm', 'mov', 'm4a', 'heic'],
     },
 });
 const upload = multer({ storage: storage });
 
 // Upload Endpoint
-router.post('/upload-evidence', upload.array('images', 5), (req, res) => {
-    try {
-        if (!req.files || req.files.length === 0) {
-            return res.status(400).json({ message: "No files provided." });
+router.post('/upload-evidence', (req, res) => {
+    upload.array('images', 5)(req, res, function (err) {
+        if (err) {
+            console.error("Multer/Cloudinary Error:", err);
+            return res.status(500).json({ message: err.message || "File upload failed" });
         }
-        const urls = req.files.map(f => f.path);
-        res.status(200).json({ urls });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
+
+        try {
+            if (!req.files || req.files.length === 0) {
+                return res.status(400).json({ message: "No files provided." });
+            }
+            const urls = req.files.map(f => f.path);
+            res.status(200).json({ urls });
+        } catch (error) {
+            console.error("Post-upload Error:", error);
+            res.status(500).json({ message: error.message });
+        }
+    });
 });
 
 // Dummy AI implementation as requested for the prototype
