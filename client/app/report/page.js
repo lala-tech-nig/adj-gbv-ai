@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import MainLayout from '@/app/components/MainLayout';
 import { ShieldCheck, Clock, ShieldAlert, Lock, ArrowRight, User, MapPin } from 'lucide-react';
