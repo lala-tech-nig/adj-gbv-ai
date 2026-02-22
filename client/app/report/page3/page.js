@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import MainLayout from '@/app/components/MainLayout';
 import { ShieldCheck, Clock, ShieldAlert, ChevronRight, Mic, Lock, UploadCloud, ChevronLeft, X } from 'lucide-react';
@@ -40,6 +40,9 @@ export default function EvidenceUpload() {
   const { formData, updateFormData } = useReportContext();
   const router = useRouter();
   const [isUploading, setIsUploading] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const mediaRecorderRef = useRef(null);
+  const audioChunksRef = useRef([]);
 
   const SERVER_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
@@ -73,6 +76,58 @@ export default function EvidenceUpload() {
   const removeFile = (indexToRemove) => {
     const updated = formData.mediaUrls.filter((_, idx) => idx !== indexToRemove);
     updateFormData({ mediaUrls: updated });
+  };
+
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+      audioChunksRef.current = [];
+
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data.size > 0) audioChunksRef.current.push(e.data);
+      };
+
+      mediaRecorder.onstop = async () => {
+        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        const audioFile = new File([audioBlob], `voice-note-${Date.now()}.webm`, { type: 'audio/webm' });
+
+        setIsUploading(true);
+        const formDataPayload = new FormData();
+        formDataPayload.append('images', audioFile);
+
+        try {
+          const res = await axios.post(`${SERVER_URL}/api/reports/upload-evidence`, formDataPayload, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+          });
+          const newUrls = res.data.urls || [];
+          // Need to fetch fresh state or trust the local append since it's async context.
+          updateFormData(prev => ({ mediaUrls: [...(prev?.mediaUrls || formData.mediaUrls), ...newUrls] }));
+        } catch (err) {
+          console.error("Audio upload failed", err);
+          alert("Failed to upload audio evidence. Please try again.");
+        } finally {
+          setIsUploading(false);
+        }
+
+        // Stop the microphone tracks to clear the recording dot on browser
+        stream.getTracks().forEach(track => track.stop());
+      };
+
+      mediaRecorder.start();
+      setIsRecording(true);
+    } catch (err) {
+      console.error("Error accessing microphone:", err);
+      alert("Microphone access is required to record voice notes. Please check your browser permissions.");
+    }
+  };
+
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+    }
   };
 
   const handleNext = () => {
@@ -170,9 +225,23 @@ export default function EvidenceUpload() {
                 <p className="text-sm text-zinc-400 font-medium mb-4 leading-relaxed">
                   If typing is difficult, you can speak your story directly. Your voice is a powerful form of evidence.
                 </p>
-                <button className="text-green-400 font-bold text-sm hover:underline flex items-center gap-1 uppercase tracking-widest">
-                  Open Recorder <ChevronRight size={14} />
-                </button>
+                {isRecording ? (
+                  <button
+                    onClick={stopRecording}
+                    className="text-red-500 font-bold text-sm hover:underline flex items-center gap-2 uppercase tracking-widest animate-pulse"
+                  >
+                    <div className="w-2 h-2 rounded-full bg-red-500"></div>
+                    Stop & Secure Audio
+                  </button>
+                ) : (
+                  <button
+                    onClick={startRecording}
+                    disabled={isUploading}
+                    className={`text-green-400 font-bold text-sm hover:underline flex items-center gap-1 uppercase tracking-widest ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  >
+                    Start Recording <ChevronRight size={14} />
+                  </button>
+                )}
               </div>
             </div>
           </motion.div>

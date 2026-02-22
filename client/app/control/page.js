@@ -213,7 +213,9 @@ export default function DashboardPage() {
     resolvedReports: 0,
     highRiskReports: 0,
     monthlyData: [],
-    recentCritical: []
+    recentCritical: [],
+    locationData: [],
+    riskDistribution: { critical: 0, elevated: 0, baseline: 0 }
   });
 
   // No dummy data, wait for real DB stats
@@ -282,6 +284,25 @@ export default function DashboardPage() {
   const displayCritical = stats.recentCritical && stats.recentCritical.length > 0
     ? stats.recentCritical
     : [];
+
+  const totalRiskCount = (stats.riskDistribution?.critical || 0) +
+    (stats.riskDistribution?.elevated || 0) +
+    (stats.riskDistribution?.baseline || 0);
+
+  const getRiskPct = (val) => {
+    if (totalRiskCount === 0) return "0%";
+    return Math.round((val / totalRiskCount) * 100) + "%";
+  };
+
+  const riskStats = [
+    { label: "Critical Priority", val: getRiskPct(stats.riskDistribution?.critical || 0), color: "bg-white" },
+    { label: "Elevated Risk", val: getRiskPct(stats.riskDistribution?.elevated || 0), color: "bg-zinc-500" },
+    { label: "Baseline Monitoring", val: getRiskPct(stats.riskDistribution?.baseline || 0), color: "bg-green-500" }
+  ];
+
+  const maxLocationCount = stats.locationData && stats.locationData.length > 0 ? Math.max(...stats.locationData.map(l => l.count)) : 1;
+
+  const locationColors = ["bg-black", "bg-zinc-800", "bg-zinc-600", "bg-zinc-400", "bg-green-500"];
 
   return (
     <div className="min-h-screen bg-zinc-50 font-sans">
@@ -389,11 +410,7 @@ export default function DashboardPage() {
               <p className="text-zinc-400 text-xs font-bold uppercase tracking-widest mb-8 border-b border-zinc-800 pb-4">Severity Distribution Matrix</p>
 
               <div className="space-y-6">
-                {[
-                  { label: "Critical Priority", val: "15%", color: "bg-white" },
-                  { label: "Elevated Risk", val: "30%", color: "bg-zinc-500" },
-                  { label: "Baseline Monitoring", val: "55%", color: "bg-green-500" }
-                ].map((item, idx) => (
+                {riskStats.map((item, idx) => (
                   <div key={idx}>
                     <div className="flex justify-between text-xs font-black mb-2 uppercase tracking-wide">
                       <span className="text-zinc-300">{item.label}</span>
@@ -415,11 +432,11 @@ export default function DashboardPage() {
             <div className="mt-10 p-4 bg-zinc-900 rounded-2xl border border-zinc-800 relative z-10">
               <div className="flex items-start gap-4">
                 <div className="p-3 bg-green-500/20 rounded-xl mt-1">
-                  <ArrowUpRight className="text-green-400" size={20} />
+                  <ArrowUpRight className="text-green-500" size={20} />
                 </div>
                 <div>
                   <h5 className="font-bold text-sm text-white">Efficiency Surge</h5>
-                  <p className="text-[11px] text-zinc-400 font-medium leading-relaxed mt-1">AI triage has improved case assignment speed by <span className="text-green-400 font-black">240%</span> over the last 48 hours.</p>
+                  <p className="text-[11px] text-zinc-400 font-medium leading-relaxed mt-1">Analytics drawn directly from the live database.</p>
                 </div>
               </div>
             </div>
@@ -468,11 +485,24 @@ export default function DashboardPage() {
               Hotspot Radar
             </h4>
             <div className="space-y-6">
-              <LocationBar label="Abeokuta South" count="45" width="90%" color="bg-black" />
-              <LocationBar label="Ado-Odo/Ota" count="32" width="65%" color="bg-zinc-800" />
-              <LocationBar label="Sagamu" count="28" width="55%" color="bg-zinc-600" />
-              <LocationBar label="Ijebu Ode" count="15" width="30%" color="bg-zinc-400" />
-              <LocationBar label="Ifo" count="10" width="20%" color="bg-green-500" />
+              {stats.locationData && stats.locationData.length > 0 ? (
+                stats.locationData.map((loc, idx) => {
+                  const pct = Math.round((loc.count / maxLocationCount) * 100) + "%";
+                  return (
+                    <LocationBar
+                      key={idx}
+                      label={loc._id || "Unknown"}
+                      count={loc.count}
+                      width={pct}
+                      color={locationColors[idx % locationColors.length]}
+                    />
+                  );
+                })
+              ) : (
+                <div className="text-zinc-500 font-bold uppercase tracking-widest text-xs text-center p-6 border-2 border-dashed border-zinc-200 rounded-2xl">
+                  No Location Data
+                </div>
+              )}
             </div>
           </motion.div>
         </div>

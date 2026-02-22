@@ -23,12 +23,35 @@ router.get('/', async (req, res) => {
         // High risk aggregate
         const highRiskReports = await Report.countDocuments({ aiRiskScore: { $gte: 70 } });
 
+        // Aggregate reports by location
+        const locationData = await Report.aggregate([
+            {
+                $group: {
+                    _id: "$location",
+                    count: { $sum: 1 }
+                }
+            },
+            { $sort: { count: -1 } },
+            { $limit: 5 }
+        ]);
+
+        // Aggregate risk distribution
+        const criticalRisk = await Report.countDocuments({ aiRiskScore: { $gte: 70 } });
+        const elevatedRisk = await Report.countDocuments({ aiRiskScore: { $gte: 40, $lt: 70 } });
+        const baselineRisk = await Report.countDocuments({ aiRiskScore: { $lt: 40 } });
+
         res.json({
             totalReports,
             pendingReports,
             resolvedReports,
             highRiskReports,
-            monthlyData
+            monthlyData,
+            locationData,
+            riskDistribution: {
+                critical: criticalRisk,
+                elevated: elevatedRisk,
+                baseline: baselineRisk
+            }
         });
     } catch (error) {
         res.status(500).json({ message: error.message });
