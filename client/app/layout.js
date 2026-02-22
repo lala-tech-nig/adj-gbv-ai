@@ -52,12 +52,16 @@ export const metadata = {
     site: "@OgunStateGov",
     creator: "@OgunStateGov",
   },
-  viewport: "width=device-width, initial-scale=1.0",
   icons: {
     icon: "/favicon.ico",
     shortcut: "/favicon-16x16.png",
     apple: "/apple-touch-icon.png",
   },
+};
+
+export const viewport = {
+  width: "device-width",
+  initialScale: 1.0,
 };
 
 export default function RootLayout({ children }) {
