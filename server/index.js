@@ -32,10 +32,8 @@ app.use('/api/reports', require('./routes/reports'));
 app.use('/api/stats', require('./routes/stats'));
 
 // Database Connection
-mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/adjgbvai', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-}).then(() => console.log('MongoDB connected'))
+mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/adjgbvai')
+  .then(() => console.log('MongoDB connected'))
   .catch(err => console.error('MongoDB connection error:', err));
 
 // Socket.IO Logic
